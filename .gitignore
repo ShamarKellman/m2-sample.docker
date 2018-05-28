@@ -1,3 +1,8 @@
+app
+generated
+pub
+var
+vendor
 docker/services/db/volumes/data
 html
 .idea
