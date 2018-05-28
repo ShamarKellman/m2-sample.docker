@@ -1,0 +1,78 @@
+# https://docs.docker.com/compose/compose-file
+version: "3.6"
+
+# https://docs.docker.com/compose/compose-file/#service-configuration-reference
+services:
+
+  #custom name
+  apache-php:
+
+      # https://docs.docker.com/compose/compose-file/#image
+      # https://github.com/udovicic/echo => https://hub.docker.com/r/udovicic/echo/
+      image: udovicic/echo:apache-php7.1
+
+      # https://docs.docker.com/compose/compose-file/#ports
+      ports:
+          - "80:80"
+
+      # https://docs.docker.com/compose/compose-file/#expose
+      expose:
+          - "9000"
+
+      # https://docs.docker.com/compose/compose-file/#volumes
+      volumes:
+          - ./docker/services/apache-php/volumes/apache.conf:/etc/apache2/sites-available/000-default.conf
+          - ./docker/services/apache-php/volumes/xdebug.ini:/etc/php/7.2/mods-available/xdebug.ini
+         # - ./docker/private/env.php:/var/www/html/app/etc/env.php
+         # - ./docker/private/.htaccess:/var/www/html/.htaccess
+          - ./html:/var/www/html
+
+      # https://docs.docker.com/compose/compose-file/#environment
+      environment:
+          - TERM=xterm-256color
+          - APACHE_RUN_USER=1000
+
+      # https://docs.docker.com/compose/compose-file/#network-configuration-reference
+      networks:
+          default:
+              aliases:
+                  - ${SERVER_NAME}
+                  - ${SERVER_ALIAS}
+
+  db:
+
+      # https://hub.docker.com/_/mysql/
+      image: mysql:5.7
+
+      volumes:
+          - ./docker/services/db/volumes/data:/var/lib/mysql
+
+      # https://docs.docker.com/compose/compose-file/#healthcheck
+      healthcheck:
+          test: "/usr/bin/mysql --user=${MYSQL_USER} --password=${MYSQL_USER} --execute \"SHOW DATABASES;\""
+          interval: 3s
+          timeout: 1s
+          retries: 5
+
+      environment:
+          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+          MYSQL_DATABASE: ${MYSQL_DATABASE}
+          MYSQL_USER: ${MYSQL_USER}
+          MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  redis:
+
+      # https://hub.docker.com/_/redis/
+      image: redis:latest
+
+  phpmyadmin:
+
+      # https://hub.docker.com/r/phpmyadmin/phpmyadmin/
+      image: phpmyadmin/phpmyadmin
+
+      ports:
+          - "8080:80"
+
+      environment:
+          MYSQL_USERNAME: ${MYSQL_ROOT_USERNAME}
+          MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
