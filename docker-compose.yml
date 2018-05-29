@@ -25,7 +25,6 @@ services:
           - ./docker/services/apache-php/volumes/apache.conf:/etc/apache2/sites-available/000-default.conf
           - ./docker/services/apache-php/volumes/xdebug.ini:/etc/php/7.1/mods-available/xdebug.ini
           - ./html:/var/www/html
-          - ./docker/private/env.php:/var/www/html/app/etc/env.php
 
       # https://docs.docker.com/compose/compose-file/#environment
       environment:
