@@ -30,21 +30,16 @@ purge: clean ## Tear down everything
 	docker-compose rm -f
 
 .PHONY: dbdump
-dbdump: start
+dbdump:
 	(${DOCKER_EXEC} ${CONTAINER_SUFFIX}_db_1 mysqldump -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}) | sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' | gzip -9 -c > dump.sql.gz
 
 .PHONY: pull-db
 pull-db: #Pull database from remote location
 	wget -O dump.sql.gz ${PRIVATE_BASE_REMOTE}dump.sql.gz
 
-.PHONY: pull-private
-pull-private: ##
-	wget -O ./docker/private/env.php ${PRIVATE_BASE_REMOTE}envphp
-
 .PHONY: dbimport
 dbimport:
-	sleep 10
-	pv dump.sql.gz | zcat | sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' | ${DOCKER_EXEC} ${CONTAINER_SUFFIX}_db_1 mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}
+	zcat dump.sql.gz | sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' | ${DOCKER_EXEC} ${CONTAINER_SUFFIX}_db_1 mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}
 
 .PHONY: install
 install:
