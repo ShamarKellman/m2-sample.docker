@@ -101,10 +101,7 @@ services:
           DASHBOARD_PASSWORD: "admin"
           DASHBOARD_SERVERS: "varnish"
           DASHBOARD_DNS_ENABLED: "true"
-  api:
-      volumes:
-        - "nfsmount:/var/www/html"
-
+          
 volumes:
     nfsmount:
         driver: local
