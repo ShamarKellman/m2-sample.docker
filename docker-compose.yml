@@ -24,7 +24,7 @@ services:
       volumes:
           - ./docker/services/apache-php/volumes/apache.conf:/etc/apache2/sites-available/000-default.conf
           - ./docker/services/apache-php/volumes/xdebug.ini:/etc/php/7.1/mods-available/xdebug.ini
-          - "nfsmount:/var/www/html"
+          - ./html:/var/www/html
 
       # https://docs.docker.com/compose/compose-file/#environment
       environment:
@@ -101,7 +101,10 @@ services:
           DASHBOARD_PASSWORD: "admin"
           DASHBOARD_SERVERS: "varnish"
           DASHBOARD_DNS_ENABLED: "true"
-
+api:
+    volumes:
+      - "nfsmount:/var/www/html"
+      
 volumes:
     nfsmount:
         driver: local
