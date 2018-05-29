@@ -101,11 +101,11 @@ services:
           DASHBOARD_PASSWORD: "admin"
           DASHBOARD_SERVERS: "varnish"
           DASHBOARD_DNS_ENABLED: "true"
-          
+
 volumes:
     nfsmount:
         driver: local
         driver_opts:
           type: nfs
           o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
-          device: ":${PWD}/html"
+          device: ":${PWD}/html1"
