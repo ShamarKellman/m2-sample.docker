@@ -90,8 +90,9 @@ boilerplate:
 	git commit -am "Initial commit"
 	rm -rf tmp/;\
 	git checkout $(p);\
-	mkdir html\;\
-	cp -R .git html/;\
-	cd html;\
+	mkdir boilerplates/$(p)/html;\
+##ADD REMOTE HERE
+	cp -R .git boilerplates/$(p)/html/;\
+	cd boilerplates/$(p)/html/;\
 	git checkout --orphan master;\
 	git rm -rf --cached *
