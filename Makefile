@@ -4,13 +4,21 @@ include .env
 start: ## Start docker containers
 	docker-compose up -d
 
+.PHONY: recreate-d
+recreate-d: ## Recreate and continue daemonized
+	{$DC} up --force-recreate -d
+
+.PHONY: recreate
+recreate: ## Recreate and continue daemonized
+	{$DC} up --force-recreate -d
+
 .PHONY: stop
 stop: ## Stop docker containers
-	docker-compose stop
+	{$DC} stop
 
 .PHONY: status
 status: ## Get docker containers status
-	docker-compose ps
+	{$DC} ps
 
 .PHONY: console
 console: ## Login to docker shell
@@ -27,13 +35,13 @@ clean: stop ## Flushes database; removes everything from web root
 
 .PHONY: purge
 purge: clean ## Tear down everything
-	docker-compose rm -f
+	${DC} rm -f
 
 .PHONY: dbdump
 dbdump:
 	(${DOCKER_EXEC} ${CONTAINER_SUFFIX}_db_1 mysqldump -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}) | sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' | gzip -9 -c > dump.sql.gz
 
-.PHONY: pull-db
+.PHONY: dbpull
 pull-db: #Pull database from remote location
 	wget -O dump.sql.gz ${PRIVATE_BASE_REMOTE}dump.sql.gz
 
@@ -48,3 +56,42 @@ dbimport:
 .PHONY: install
 install:
 	${DOCKER_EXEC_TTY} -u ${WEB_USER} ${CONTAINER_SUFFIX}_apache-php_1 /bin/bash -c 'cd /var/www/html;composer install;php bin/magento setup:upgrade'
+
+.PHONY: xxx
+xxx:
+	echo
+
+.PHONY: boilerplate
+boilerplate:
+	mkdir boilerplates/$(p)
+	cp -R .git boilerplates/$(p)/
+	cd boilerplates/$(p);\
+	git stash;\
+	cd ..;\
+	cd ..;\
+	mkdir tmp;\
+	cp -R .git tmp/;\
+	cd tmp;\
+	git stash;\
+	git checkout ${SERVER_NAME}-mac\
+	git stash;\
+	rm -rf .git\
+	cd ..;\
+	cd boilerplates/$(p);\
+	rm -rf .git;\
+	git init;\
+	git checkout --orphan $(p);\
+	git add .;\
+	git commit -am "Initial commit"; \
+	git checkout --orphan $(p)-mac;\
+	git rm -rf --cached *;\
+	cp -R tmp/* .;\
+	git add .;\
+	git commit -am "Initial commit"
+	rm -rf tmp/;\
+	git checkout orphan $(p);\
+	mkdir html\;\
+	cp -R .git html/;\
+	cd html;\
+	git checkout --orphan master;\
+	git rm -rf --cached *
