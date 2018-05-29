@@ -89,7 +89,7 @@ boilerplate:
 	git add .;\
 	git commit -am "Initial commit"
 	rm -rf tmp/;\
-	git checkout orphan $(p);\
+	git checkout $(p);\
 	mkdir html\;\
 	cp -R .git html/;\
 	cd html;\
