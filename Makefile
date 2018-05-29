@@ -37,9 +37,12 @@ dbdump:
 pull-db: #Pull database from remote location
 	wget -O dump.sql.gz ${PRIVATE_BASE_REMOTE}dump.sql.gz
 
+.PHONY: drop-db
+drop-db:
+	${DOCKER_EXEC} ${CONTAINER_SUFFIX}_db_1 /bin/bash -c 'echo "DROP DATABASE ${MYSQL_DATABASE}; CREATE DATABASE ${MYSQL_DATABASE} COLLATE utf8_unicode_ci" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'
+
 .PHONY: dbimport
 dbimport:
-	${DOCKER_EXEC} ${CONTAINER_SUFFIX}_db_1 /bin/bash -c 'echo "DROP DATABASE ${MYSQL_DATABASE}; CREATE DATABASE ${MYSQL_DATABASE} COLLATE utf8_unicode_ci" | mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}'
 	zcat dump.sql.gz | sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' | ${DOCKER_EXEC_INTERACTIVE} ${CONTAINER_SUFFIX}_db_1 mysql -u ${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE}
 
 .PHONY: install
