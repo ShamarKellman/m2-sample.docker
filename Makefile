@@ -57,10 +57,6 @@ dbimport:
 install:
 	${DOCKER_EXEC_TTY} -u ${WEB_USER} ${CONTAINER_SUFFIX}_apache-php_1 /bin/bash -c 'cd /var/www/html;composer install;php bin/magento setup:upgrade'
 
-.PHONY: xxx
-xxx:
-	echo
-
 .PHONY: boilerplate
 boilerplate:
 	mkdir boilerplates/$(p)
@@ -68,31 +64,35 @@ boilerplate:
 	cd boilerplates/$(p);\
 	git stash;\
 	cd ..;\
-	cd ..;\
 	mkdir tmp;\
-	cp -R .git tmp/;\
+	cp -Ra $(p)/.git tmp/;\
 	cd tmp;\
 	git stash;\
 	git checkout ${SERVER_NAME}-mac\
-	git stash;\
 	rm -rf .git\
 	cd ..;\
-	cd boilerplates/$(p);\
+	cd $(p);\
 	rm -rf .git;\
 	git init;\
 	git checkout --orphan $(p);\
 	git add .;\
 	git commit -am "Initial commit"; \
 	git checkout --orphan $(p)-mac;\
-	git rm -rf --cached *;\
-	cp -R tmp/* .;\
+	git rm -rf --cached .;\
+	git clean -df;\
+	cd ..;\
+	cp -Ra tmp/* .;\
+	cd $(p);\
 	git add .;\
-	git commit -am "Initial commit"
+	git commit -am "Initial commit";\
+	cd ..;\
 	rm -rf tmp/;\
+	cd $(p);\
 	git checkout $(p);\
-	mkdir boilerplates/$(p)/html;\
+	mkdir html;\
 ##ADD REMOTE HERE
-	cp -R .git boilerplates/$(p)/html/;\
-	cd boilerplates/$(p)/html/;\
+	cp -Ra .git html/;\
+	cd html/;\
 	git checkout --orphan master;\
-	git rm -rf --cached *
+	git rm -rf --cached .;\
+	git clean -df;\
