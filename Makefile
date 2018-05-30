@@ -59,20 +59,19 @@ install:
 
 .PHONY: boilerplate
 boilerplate:
-	mkdir boilerplates/$(p)
-	cp -R .git boilerplates/$(p)/
-	cd boilerplates/$(p);\
+	mkdir ${BASEDIR}/boilerplates/$(p)
+	cp -R .git ${BASEDIR}/boilerplates/$(p)/
+	cd ${BASEDIR}/boilerplates/$(p);\
 	git stash;\
-	cd ..;\
-	mkdir tmp;\
-	cp -Ra $(p)/.git tmp/;\
-	cd tmp;\
+	cd ${BASEDIR}/boilerplates/;\
+	mkdir ${BASEDIR}/boilerplates/tmp;\
+	cp -Ra ${BASEDIR}/boilerplates/$(p)/.git ${BASEDIR}/boilerplates/tmp/;\
+	cd ${BASEDIR}/boilerplates/tmp;\
 	git stash;\
-	git checkout ${SERVER_NAME}-mac\
-	rm -rf .git\
-	cd ..;\
-	cd $(p);\
-	rm -rf .git;\
+	git checkout ${SERVER_NAME}-mac;\
+	rm -rf ${BASEDIR}/boilerplates/tmp/.git;\
+	cd ${BASEDIR}/boilerplates/$(p);\
+	rm -rf ${BASEDIR}/boilerplates/$(p)/.git;\
 	git init;\
 	git checkout --orphan $(p);\
 	git add .;\
@@ -80,19 +79,23 @@ boilerplate:
 	git checkout --orphan $(p)-mac;\
 	git rm -rf --cached .;\
 	git clean -df;\
-	cd ..;\
-	cp -Ra tmp/* .;\
-	cd $(p);\
+	cp -Ra ${BASEDIR}/boilerplates/tmp/* .;\
 	git add .;\
 	git commit -am "Initial commit";\
-	cd ..;\
-	rm -rf tmp/;\
-	cd $(p);\
+	rm -rf ${BASEDIR}/boilerplates/tmp/;\
 	git checkout $(p);\
-	mkdir html;\
-##ADD REMOTE HERE
-	cp -Ra .git html/;\
-	cd html/;\
+	mkdir ${BASEDIR}/boilerplates/$(p)/html;\
+	cp -R .git ${BASEDIR}/boilerplates/$(p)/html/;\
+	cd ${BASEDIR}/boilerplates/$(p)/html/;\
 	git checkout --orphan master;\
-	git rm -rf --cached .;\
+	git rm -rf --cached ${BASEDIR}/boilerplates/$(p)/html/;\
 	git clean -df;\
+
+
+
+
+
+
+
+
+
