@@ -65,7 +65,7 @@ boilerplate:
 	git stash;\
 	cd ${BASEDIR}/boilerplates/;\
 	mkdir ${BASEDIR}/boilerplates/tmp;\
-	cp -Ra ${BASEDIR}/boilerplates/$(p)/.git ${BASEDIR}/boilerplates/tmp/;\
+	cp -R ${BASEDIR}/boilerplates/$(p)/.git ${BASEDIR}/boilerplates/tmp/;\
 	cd ${BASEDIR}/boilerplates/tmp;\
 	git stash;\
 	git checkout ${SERVER_NAME}-mac;\
@@ -79,7 +79,7 @@ boilerplate:
 	git checkout --orphan $(p)-mac;\
 	git rm -rf --cached .;\
 	git clean -df;\
-	cp -Ra ${BASEDIR}/boilerplates/tmp/* .;\
+	cp -R -a ${BASEDIR}/boilerplates/tmp/* .;\
 	git add .;\
 	git commit -am "Initial commit";\
 	rm -rf ${BASEDIR}/boilerplates/tmp/;\
